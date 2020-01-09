@@ -1,7 +1,13 @@
 from PIL import Image
 import numpy as np
+import os
 
-img = Image.open("./スクリーンショット 2020-01-09 7.30.05.png")
-fix_img = img.convert('L')
-dat_grey = np.asarray(fix_img)
-print(dat_grey)
+data_array = np.asarray([])
+
+main_folder = os.listdir("./")
+for sub_folder in main_folder:
+    data_ist = os.listdir(sub_folder)
+    for data in sub_folder:
+        img = Image.open(data)
+        fix_img = img.convert('L')
+        dat_grey = np.asarray(fix_img)
