@@ -9,7 +9,7 @@ def load_func():
     main_folder = os.listdir("./")
     for sub_folder in main_folder:
         data_ist = os.listdir(sub_folder)
-        for data in data_folder:
+        for data in data_list:
             img = Image.open(data)
             fix_img = img.convert('L')
             data_grey = np.asarray(fix_img)
