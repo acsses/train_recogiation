@@ -1,9 +1,16 @@
 from PIL import Image
 import os
-folder = os.listdir("./Type223Seris1000/")
+import sys
+
+path = sys.argv
+
+folder = os.listdir(path[1])
 print(folder)
+
 for filename in folder:
-    full_name = "./Type223Seris1000/" + filename
+    full_name = path[1] + "/" + filename
     im = Image.open(full_name)
     cropped = im.crop(im.getbbox())
-    cropped.save(full_name)
+    width,height=8,8
+    img = cropped.resize((width,height))
+    img.save(full_name)
