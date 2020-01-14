@@ -15,3 +15,4 @@ def load_func():
             data_grey = np.asarray(fix_img)
             target_arrry = np.append(target_arrry,sub_folder)
             data_array = np.append(data_array,data_grey,axis=0)
+    return data_array,np.array([target_arrry]).astype(np.int32)

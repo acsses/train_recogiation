@@ -10,20 +10,31 @@ import nnabla.functions as F
 import nnabla.parametric_functions as PF
 import nnabla.solvers as S
 from nnabla.utils.data_iterator import data_iterator_simple
+import nnabla.initializer as I
 
 # ②　NNabla関連以外のモジュールのインポート
 import numpy as np
 from sklearn.datasets import load_digits
+from PIL import Image
+
 
 # ③　tiny_digits.pyから転載したデータ整形function
 
 
 def data_iterator_tiny_digits(digits, batch_size=64, shuffle=False, rng=None):
     def load_func(index):
-        """Loading an image and its label"""
-        img = digits.images[index]
-        label = digits.target[index]
-        return img[None], np.array([label]).astype(np.int32)
+        data_array = np.empty((0,8),float)
+        target_arrry = np.array([])
+        main_folder = os.listdir("./data/")
+        for sub_folder in main_folder:
+            data_list = os.listdir("./data/" + sub_folder)
+            for data in data_list:
+                img = Image.open("./data/" + sub_folder + "/" + data)
+                fix_img = img.convert('L')
+                data_grey = np.asarray(fix_img)
+                target_arrry = np.append(target_arrry,sub_folder)
+                data_array = np.append(data_array,data_grey,axis=0)
+        return data_array,np.array([target_arrry]).astype(np.int32)
     return data_iterator_simple(load_func, digits.target.shape[0], batch_size, shuffle, rng, with_file_cache=False)
 
 # ④　損失グラフを構築する関数を定義する
@@ -55,10 +66,11 @@ def training(xt, tt, data_t, loss_t, steps, learning_rate):
 
 
 def network(x):
+    initializer = I.UniformInitializer((-0.1, 0.1))
     with nn.parameter_scope("cnn"):
         with nn.parameter_scope("conv1"):
             h = F.relu(PF.batch_normalization(
-                PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2))))
+                PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2),w_init=initializer, with_bias=False)))
         with nn.parameter_scope("conv2"):
             h = F.relu(PF.batch_normalization(
                 PF.convolution(h, 8, (3, 3), pad=(1, 1))))
@@ -72,8 +84,8 @@ def network(x):
 
 # ⑦　実行開始：scikit_learnでdigits（8✕8サイズ）データを取得し、NNablaで処理可能に整形する
 np.random.seed(0)
-digits = load_digits(n_class=10)
-data = data_iterator_tiny_digits(digits, batch_size=64, shuffle=True)
+digits = 0
+data = data_iterator_tiny_digits(digits,batch_size=64, shuffle=True)
 
 # ⑧　ニューラルネットワークを構築する
 nn.clear_parameters()
