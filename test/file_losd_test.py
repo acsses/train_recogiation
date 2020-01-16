@@ -23,19 +23,12 @@ from PIL import Image
 
 def data_iterator_tiny_digits(digits, batch_size=64, shuffle=False, rng=None):
     def load_func(index):
-        data_array = np.empty((0,8),float)
-        target_arrry = np.array([])
-        main_folder = os.listdir("./data/")
-        for sub_folder in main_folder:
-            data_list = os.listdir("./data/" + sub_folder)
-            for data in data_list:
-                img = Image.open("./data/" + sub_folder + "/" + data)
-                fix_img = img.convert('L')
-                data_grey = np.asarray(fix_img)
-                target_arrry = np.append(target_arrry,sub_folder)
-                data_array = np.append(data_array,data_grey,axis=0)
-        return data_array,np.array([target_arrry]).astype(np.int32)
-    return data_iterator_simple(load_func, digits.target.shape[0], batch_size, shuffle, rng, with_file_cache=False)
+        data_all = np.load("./data.npy")
+        target_all = np.load("./target.npy")
+        data = data_all[index]
+        target = target_all[index]
+        return data[None],np.array([target]).astype(np.int32)
+    return data_iterator_simple(load_func, 198, batch_size, shuffle, rng, with_file_cache=False)
 
 # ④　損失グラフを構築する関数を定義する
 
@@ -66,19 +59,18 @@ def training(xt, tt, data_t, loss_t, steps, learning_rate):
 
 
 def network(x):
-    initializer = I.UniformInitializer((-0.1, 0.1))
     with nn.parameter_scope("cnn"):
         with nn.parameter_scope("conv1"):
-            h = F.relu(PF.batch_normalization(
-                PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2),w_init=initializer, with_bias=False)))
+            h = F.tanh(PF.batch_normalization(
+            PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2))))
         with nn.parameter_scope("conv2"):
-            h = F.relu(PF.batch_normalization(
-                PF.convolution(h, 8, (3, 3), pad=(1, 1))))
+            h = F.tanh(PF.batch_normalization(
+            PF.convolution(h, 8, (3, 3), pad=(1, 1))))
             h = F.average_pooling(h, (2, 2))
         with nn.parameter_scope("fc3"):
-            h = F.relu(PF.affine(h, 32))
+            h = F.tanh(PF.affine(h, 32))
         with nn.parameter_scope("classifier"):
-            h = PF.affine(h, 10)
+            h = PF.affine(h,10)
     return h
 
 
@@ -97,7 +89,7 @@ loss = logreg_loss(y, t)
 
 # ⑨　学習する
 learning_rate = 1e-1
-training(x, t, data, loss, 1000, learning_rate)
+training(x, t, data, loss, 1000000, learning_rate)
 
 # ⑩　推論し、最後に正確さを求めて表示する
 x.d, t.d = data.next()
