@@ -10,8 +10,7 @@ for sub_folder in main_folder:
     data_list = os.listdir("./data/" + sub_folder)
     for data in data_list:
         img = Image.open("./data/" + sub_folder + "/" + data)
-        fix_img = img.convert('L')
-        data_grey = np.asarray(fix_img)
+        data_grey = np.asarray(img)
         target_array = np.append(target_array,sub_folder)
         data_array.append(data_grey)
         i = i +1
