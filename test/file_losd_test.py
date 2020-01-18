@@ -89,7 +89,7 @@ loss = logreg_loss(y, t)
 
 # ⑨　学習する
 learning_rate = 1e-1
-training(x, t, data, loss, 1000000, learning_rate)
+training(x, t, data, loss, 1000, learning_rate)
 
 # ⑩　推論し、最後に正確さを求めて表示する
 x.d, t.d = data.next()
