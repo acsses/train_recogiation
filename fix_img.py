@@ -10,7 +10,8 @@ print(folder)
 for filename in folder:
     full_name = path[1] + "/" + filename
     im = Image.open(full_name)
-    cropped = im.crop(im.getbbox())
-    width,height=8,8
-    img = cropped.resize((width,height))
+    fix_img = im.convert('L')
+    cropped = fix_img.crop(fix_img.getbbox())
+    width,height=64,64
+    img = cropped.resize((width,height),Image.ANTIALIAS)
     img.save(full_name)
