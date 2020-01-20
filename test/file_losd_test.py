@@ -21,7 +21,7 @@ from PIL import Image
 # ③　tiny_digits.pyから転載したデータ整形function
 
 
-def data_iterator_tiny_digits(digits, batch_size=64, shuffle=False, rng=None):
+def data_iterator_tiny_digits(digits, batch_size=1, shuffle=False, rng=None):
     def load_func(index):
         data_all = np.load("./data.npy")
         target_all = np.load("./target.npy")
@@ -61,14 +61,14 @@ def training(xt, tt, data_t, loss_t, steps, learning_rate):
 def network(x):
     with nn.parameter_scope("cnn"):
         with nn.parameter_scope("conv1"):
-            h = F.relu(PF.batch_normalization(
+            h = F.tanh(PF.batch_normalization(
             PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2))))
         with nn.parameter_scope("conv2"):
-            h = F.relu(PF.batch_normalization(
+            h = F.tanh(PF.batch_normalization(
             PF.convolution(h, 8, (3, 3), pad=(1, 1))))
             h = F.average_pooling(h, (2, 2))
         with nn.parameter_scope("fc3"):
-            h = F.relu(PF.affine(h, 32))
+            h = F.tanh(PF.affine(h, 32))
         with nn.parameter_scope("classifier"):
             h = PF.affine(h,10)
     return h
@@ -77,7 +77,7 @@ def network(x):
 # ⑦　実行開始：scikit_learnでdigits（8✕8サイズ）データを取得し、NNablaで処理可能に整形する
 np.random.seed(0)
 digits = 0
-data = data_iterator_tiny_digits(digits,batch_size=64, shuffle=True)
+data = data_iterator_tiny_digits(digits,batch_size=32, shuffle=True)
 
 # ⑧　ニューラルネットワークを構築する
 nn.clear_parameters()

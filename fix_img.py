@@ -12,6 +12,6 @@ for filename in folder:
     im = Image.open(full_name)
     cropped = im.crop(im.getbbox())
     fix_img = cropped.convert('L')
-    width,height=64,64
+    width,height=32,32
     img = fix_img.resize((width,height),Image.ANTIALIAS)
     img.save(full_name)
