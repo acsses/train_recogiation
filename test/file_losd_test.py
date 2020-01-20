@@ -61,14 +61,14 @@ def training(xt, tt, data_t, loss_t, steps, learning_rate):
 def network(x):
     with nn.parameter_scope("cnn"):
         with nn.parameter_scope("conv1"):
-            h = F.tanh(PF.batch_normalization(
+            h = F.relu(PF.batch_normalization(
             PF.convolution(x, 4, (3, 3), pad=(1, 1), stride=(2, 2))))
         with nn.parameter_scope("conv2"):
-            h = F.tanh(PF.batch_normalization(
+            h = F.relu(PF.batch_normalization(
             PF.convolution(h, 8, (3, 3), pad=(1, 1))))
             h = F.average_pooling(h, (2, 2))
         with nn.parameter_scope("fc3"):
-            h = F.tanh(PF.affine(h, 32))
+            h = F.relu(PF.affine(h, 32))
         with nn.parameter_scope("classifier"):
             h = PF.affine(h,10)
     return h
@@ -89,7 +89,7 @@ loss = logreg_loss(y, t)
 
 # ⑨　学習する
 learning_rate = 1e-1
-training(x, t, data, loss, 1000000, learning_rate)
+training(x, t, data, loss, 1000, learning_rate)
 
 # ⑩　推論し、最後に正確さを求めて表示する
 x.d, t.d = data.next()
