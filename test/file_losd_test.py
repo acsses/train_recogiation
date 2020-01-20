@@ -28,7 +28,7 @@ def data_iterator_tiny_digits(digits, batch_size=1, shuffle=False, rng=None):
         data = data_all[index]
         target = target_all[index]
         return data[None],np.array([target]).astype(np.int32)
-    return data_iterator_simple(load_func, 198, batch_size, shuffle, rng, with_file_cache=False)
+    return data_iterator_simple(load_func, 456, batch_size, shuffle, rng, with_file_cache=False)
 
 # ④　損失グラフを構築する関数を定義する
 
