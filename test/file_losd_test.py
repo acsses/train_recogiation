@@ -77,7 +77,7 @@ def network(x):
 # ⑦　実行開始：scikit_learnでdigits（8✕8サイズ）データを取得し、NNablaで処理可能に整形する
 np.random.seed(0)
 digits = 0
-data = data_iterator_tiny_digits(digits,batch_size=32, shuffle=True)
+data = data_iterator_tiny_digits(digits,batch_size=26, shuffle=True)
 
 # ⑧　ニューラルネットワークを構築する
 nn.clear_parameters()
