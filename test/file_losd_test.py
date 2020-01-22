@@ -11,11 +11,15 @@ import nnabla.parametric_functions as PF
 import nnabla.solvers as S
 from nnabla.utils.data_iterator import data_iterator_simple
 import nnabla.initializer as I
+import nnabla.utils.save as save
 
 # ②　NNabla関連以外のモジュールのインポート
 import numpy as np
 from sklearn.datasets import load_digits
 from PIL import Image
+from _checkpoint_nnp_util import save_nnp
+from args import get_args
+args = get_args()
 
 
 # ③　tiny_digits.pyから転載したデータ整形function
@@ -100,3 +104,6 @@ for p in range(len(t.d)):
         mch += 1
 
 print("Accuracy:{}".format(mch / len(t.d)))
+
+contents = save_nnp({'x': x}, {'y': y}, args.batch_size)
+save.save(os.path.join(args.model_save_path,'{}_result.nnp'.format(args.net)), contents)
