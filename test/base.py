@@ -31,7 +31,7 @@ def load_digits(n_class=10, return_X_y=False):
 
     return Bunch(data=data,
                  target=target,
-                 target_names=np.array([1,2]),
+                 target_names=np.array([1,2,3,4,5]),
                  images=images,
                  DESCR=descr)
 

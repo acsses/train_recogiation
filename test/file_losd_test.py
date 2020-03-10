@@ -72,17 +72,17 @@ def network(x):
             PF.convolution(h, 8, (3, 3), pad=(1, 1))))
             h = F.average_pooling(h, (2, 2))
         with nn.parameter_scope("fc3"):
-            h = F.tanh(PF.affine(h, 6))
+            h = F.tanh(PF.affine(h, 16))
         with nn.parameter_scope("classifier"):
-            h = PF.affine(h,2)
+            h = PF.affine(h,5)
     return h
 
 
 # ⑦　実行開始：scikit_learnでdigits（8✕8サイズ）データを取得し、NNablaで処理可能に整形する
 np.random.seed(0)
-digits = load_digits(n_class=2)
+digits = load_digits(n_class=5)
 print(digits)
-data = data_iterator_tiny_digits(digits,batch_size=32, shuffle=True)
+data = data_iterator_tiny_digits(digits,batch_size=16, shuffle=True)
 
 # ⑧　ニューラルネットワークを構築する
 nn.clear_parameters()
@@ -106,11 +106,10 @@ mch = 0
 for p in range(len(t.d)):
     with open(path_w, mode='a') as f:
         f.write(str(y.d.argmax(axis=1))+"\n")
-    print(y.d)
+    print(y.d.argmax(axis=1))
     print(t.d)
     if t.d[p] == y.d.argmax(axis=1)[p]:
         mch = mch + 1
-        print("hit")
 
 print("Accuracy:{}".format(mch / len(t.d)))
 
