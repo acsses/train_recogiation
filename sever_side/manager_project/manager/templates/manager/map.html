@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>test</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.0/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.3.0/dist/leaflet.js"></script>
+    <script>
+      function init (){
+        mymap = L.map('mapcontainer');
+
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
+        }).addTo(mymap);
+
+        mymap.setView([35, 140], 13);
+        var value = JSON.parse(document.getElementById('hello-data').textContent);
+        if(Object.keys(value).length != 0) {
+          mkdata =[]
+          for(var i = 0; i < Object.keys(value).length;i++){
+            key = "data"+i;
+            data = value[key];
+            mkdata.push({'pos':[data.rocation_n,data.rocation_w],'type':data.Type,'path':data.data})
+          }
+          console.log(mkdata)
+          for(var num in mkdata){
+            image = mkdata[num].path
+            Type = mkdata[num].type
+            rocate = mkdata[num].pos
+            L.marker(rocate).addTo(mymap).bindPopup("<br><img src='"+image+"' %}' width='200' height='125'><br />"+"<p>"+Type+"</p>",{maxWidth:"250",closeOnClick: true});
+          }
+        }
+        var upload = L.control({ position: "topright" });
+        upload.onAdd = function(mymap){
+          this.ele = L.DomUtil.create('div', "infostyle");
+          this.ele.id = "latlondiv"
+          return this.ele;
+        }
+        form = document.createElement('form');
+        form.id = "form";
+        form.method="POST";
+        form.enctype="multipart/form-data";
+        up_field = document.createElement('input');
+        up_field.type = "file";
+        up_field.name = "upfile";
+        up_field.id = "upfile";
+        up_field.accept = "image/*"
+        upload.addTo(mymap);
+        submit_div = document.createElement('div')
+        submit_div.id = "div_button"
+        submit = document.createElement('button');
+        submit.type = "submit";
+        submit.id = "button";
+        var box = document.getElementById("latlondiv");
+        box.appendChild(form);
+        var target = document.getElementById("form");
+        target.appendChild(submit_div);
+        var button_ele = document.getElementById("div_button")
+        button_ele.appendChild(submit)
+        target.appendChild(up_field);
+        button.innerHTML="送信"
+        upfile.innerHTML = '{% csrf_token %}'
+      }
+    </script>
+    <style>
+    #latlondiv{
+      position: absolute;
+      right:10px;
+      background-color:snow;
+      height: 150px;
+      width:  300px;
+      border-radius: 10px;
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.6));
+    }
+    #upfile{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform : translate(-50%,-50%);
+      transform : translate(-50%,-50%);
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.6));
+    }
+    #div_button{
+      text-align: center;
+      position: relative;
+      top: 100px;
+    }
+    #button{
+      border-radius: 5px;
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.6));
+    }
+    .map{
+      width:100vw;
+      height:100vh;
+    }
+    </style>
+    
+  </head>
+
+  <body onload="init()">
+    <div id="mapcontainer" class="map"></div>
+    {{ data|json_script:"hello-data" }}
+    {{ path }}
+  </body>
+</html>
